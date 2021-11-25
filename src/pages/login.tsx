@@ -6,6 +6,7 @@ import {
   frontLoginMutation,
   frontLoginMutationVariables,
 } from "./__generated__/frontLoginMutation";
+import logo from "../images/logo.jpg";
 
 type Inputs = {
   email: string;
@@ -44,60 +45,75 @@ export const Login = () => {
   >(LOGIN_MUTATION, { onCompleted });
 
   const onSubmit: SubmitHandler<Inputs> = () => {
-    const { email, password } = getValues();
-    loginMutation({
-      variables: {
-        loginInput: {
-          email,
-          password,
+    if (!loading) {
+      const { email, password } = getValues();
+      loginMutation({
+        variables: {
+          loginInput: {
+            email,
+            password,
+          },
         },
-      },
-    });
+      });
+    }
   };
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-800 flex-col">
-      <div className="my-10">
-        <span className="font-bold text-6xl text-white">로그인</span>
-      </div>
-      {/* <div className="bg-white w-full max-w-lg py-10 rounded-2xl text-center"> */}
-      <form
-        className="bg-white w-full max-w-lg py-10 rounded-2xl text-center flex flex-col"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <label className="font-bold text-2xl mb-5 text-gray-600">이메일</label>
-        <input
-          placeholder="Email"
-          className="input"
-          {...register("email", {
-            required: true,
-            pattern:
-              /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
-          })}
-        />
-        {errors.email && <p>올바른 이메일을 입력해주십시오.</p>}
-        <label className="font-bold text-2xl my-5 text-gray-600">
-          비밀번호
-        </label>
-        <input
-          placeholder="Password"
-          className="input"
-          {...register("password", { required: true, maxLength: 20 })}
-          type="password"
-        />
-        {errors.password && <p>패스워드를 입력해주십시오.</p>}
+    <div className="h-screen flex items-center flex-col mt-10 lg:mt-32">
+      <div className="w-full max-w-screen-sm flex flex-col items-center">
+        <img src={logo} className=" w-52 mb-10" />
+        <h4 className=" font-bold text-cyan-600 mb-5">
+          이곳은 관리자 로그인 페이지입니다.
+        </h4>
+        {/* <span className="font-bold text-6xl text-black mb-5">로그인</span> */}
+        <form
+          className="grid gap-3 mt-5 px-5 w-full"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          {/* <label className="font-bold text-2xl mb-5 text-gray-600 w-full text-center">
+            이메일
+          </label> */}
+          <input
+            placeholder="이메일"
+            className="input text-cyan-600 placeholder-cyan-600"
+            {...register("email", {
+              required: true,
+              pattern:
+                /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
+            })}
+          />
+          {errors.email && (
+            <p className="text-red-700 font-bold">
+              올바른 이메일을 입력해주십시오.
+            </p>
+          )}
+          {/* <label className="font-bold text-2xl my-5 text-gray-600 w-full text-center">
+            비밀번호
+          </label> */}
+          <input
+            placeholder="비밀번호"
+            className="input text-cyan-600 placeholder-cyan-600"
+            {...register("password", { required: true, maxLength: 20 })}
+            type="password"
+          />
+          {errors.password && (
+            <p className="text-red-700 font-bold">패스워드를 입력해주십시오.</p>
+          )}
 
-        <button className="btn" type="submit">
-          {loading ? "Loading..." : "로그인"}
-        </button>
-        {loginMutationResult?.login.error && (
-          <p>{loginMutationResult.login.error}</p>
-        )}
+          <button className="btn" type="submit">
+            {loading ? "로딩중..." : "로그인"}
+          </button>
+          {loginMutationResult?.login.error && (
+            <p className="text-red-700 mt-5 font-bold">
+              {loginMutationResult.login.error}
+            </p>
+          )}
 
-        {/* <input
+          {/* <input
           type="submit"
           className="bg-blue-200 mx-24 py-3 mt-32 rounded-2xl"
         /> */}
-      </form>
+        </form>
+      </div>
     </div>
     // </div>
   );

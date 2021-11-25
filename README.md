@@ -1,3 +1,5 @@
+# Stock-Chart
+
 ## tailwind css
 
 `npm install -D tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9`
@@ -14,3 +16,8 @@
 If you didn't check your node version, You can't use codegen!!
 
 `__generated__`folder is codegen output
+
+- admin login (o)
+- load stock data (o)
+- making chart (x)
+- chatting (x)
