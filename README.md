@@ -19,5 +19,7 @@ If you didn't check your node version, You can't use codegen!!
 
 - admin login (o)
 - load stock data (o)
-- making chart (x)
+- making chart (o)
+- making floating chart(x)
+- making line chart (x)
 - chatting (x)

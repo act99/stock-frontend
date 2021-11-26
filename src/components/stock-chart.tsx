@@ -8,11 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {
-  frontStockQuery,
-  frontStockQuery_gsStock,
-} from "../pages/__generated__/frontStockQuery";
-import { StockTypes } from "../types";
+
 import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
@@ -37,14 +33,21 @@ const options = {
   },
 };
 
-export const StockChart: React.FC<frontStockQuery> = ({ gsStock }) => {
-  const generateChartData = () => {
-    const stockData: any[] = [];
-    const openData: any[] = [];
-    const closeData: number[] = [];
-    const volume: number[] = [];
+type Props = {
+  openArray: number[];
+  closeArray: number[];
+  volumeArray: number[];
+  dateArray: string[];
+};
 
-    gsStock.map((item) => console.log([item.open]));
+export const StockChart: React.FC<Props> = ({
+  openArray,
+  closeArray,
+  volumeArray,
+  dateArray,
+}) => {
+  const generateChartData = () => {
+    console.log(openArray);
     //   console.log();
     // gsStock.map((item) => item.open);
     // gsStock.forEach((stock) => {
@@ -52,11 +55,13 @@ export const StockChart: React.FC<frontStockQuery> = ({ gsStock }) => {
     // });
     // console.log(stockData);
     return {
-      label: "gs 주식",
+      labels: dateArray,
       datasets: [
         {
-          label: "라벨",
-          data: gsStock.map((item) => item.open),
+          label: "굿굿",
+          data: dateArray.map(() => {
+            return [openArray, closeArray];
+          }),
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
       ],
@@ -64,7 +69,7 @@ export const StockChart: React.FC<frontStockQuery> = ({ gsStock }) => {
   };
   return (
     <div>
-      <Bar options={options} data={generateChartData()}></Bar>
+      <Bar options={options} data={generateChartData()} />
     </div>
   );
 };
