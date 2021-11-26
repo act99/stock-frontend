@@ -1,61 +1,43 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
+import { StockChart } from "../components/stock-chart";
 import { frontStockQuery } from "./__generated__/frontStockQuery";
 
 export const Stock = ({}) => {
   const { data, loading } = useQuery<frontStockQuery>(STOCK_QUERY, {
     variables: {},
   });
-  console.log(data);
-  return <div></div>;
-};
 
-// type StockTypes = {
-//   index: number;
-//   date: number;
-//   check_item: string;
-//   code: number;
-//   code_name: string;
-//   d1_diff_rate: number;
-//   close: number;
-//   open: number;
-//   high: number;
-//   low: number;
-//   volume: number;
-//   clo5: number;
-//   clo10: number;
-//   clo20: number;
-//   clo40: number;
-//   clo60: number;
-//   clo80: number;
-//   clo100: number;
-//   clo120: number;
-//   clo5_diff_rate: number;
-//   clo10_diff_rate: number;
-//   clo20_diff_rate: number;
-//   clo40_diff_rate: number;
-//   clo60_diff_rate: number;
-//   clo80_diff_rate: number;
-//   clo100_diff_rate: number;
-//   clo120_diff_rate: number;
-//   yes_clo5: number;
-//   yes_clo10: number;
-//   yes_clo20: number;
-//   yes_clo40: number;
-//   yes_clo60: number;
-//   yes_clo80: number;
-//   yes_clo100: number;
-//   yes_clo120: number;
-//   vol5: number;
-//   vol10: number;
-//   vol20: number;
-//   vol40: number;
-//   vol60: number;
-//   vol80: number;
-//   vol100: number;
-//   vol120: number;
-// };
+  // const stockOpen = data?.gsStock.map((item) => item.open);
+  // const stockClose = data?.gsStock.map((item) => item.open);
+  // const stockVolume = data?.gsStock.map((item) => item.volume);
+  // const openArray: number[] = [];
+  // const closeArray: number[] = [];
+  // const volumeArray: number[] = [];
+  // stockOpen?.forEach((open) => openArray.push(open));
+  // stockClose?.forEach((open) => closeArray.push(open));
+  // stockVolume?.forEach((open) => volumeArray.push(open));
+  // console.log(stockOpen);
+
+  const stockData = data?.gsStock.map((item) => item);
+  const dataArray: any[] = [];
+  dataArray.push(stockData);
+  console.log(dataArray);
+  return (
+    <div>
+      {!loading ? <StockChart gsStock={dataArray} /> : <h3>Loading...</h3>}
+
+      {/* <StockChart open={openArray} close={closeArray} volume={volumeArray} /> */}
+      {/* <div key={data?.gsStock.find(d1)}></div> */}
+      {/* {data?.gsStock.map((stock) => (
+        <div>
+          <h1>{stock.open}</h1>
+        </div>
+      ))} */}
+    </div>
+  );
+};
 
 const STOCK_QUERY = gql`
   query frontStockQuery {

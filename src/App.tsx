@@ -1,6 +1,4 @@
-import { useQuery, useReactiveVar } from "@apollo/client";
-import gql from "graphql-tag";
-import React from "react";
+import { useReactiveVar } from "@apollo/client";
 import { isLoggedInVar } from "./apollo";
 import { LoginRouter } from "./routers/login-router";
 import { LogoutRouter } from "./routers/logout-router";
