@@ -9,7 +9,7 @@ import {
   Legend,
 } from "chart.js";
 
-import { Bar } from "react-chartjs-2";
+import { Bar, Chart } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -59,9 +59,7 @@ export const StockChart: React.FC<Props> = ({
       datasets: [
         {
           label: "굿굿",
-          data: dateArray.map(() => {
-            return [openArray, closeArray];
-          }),
+          data: openArray,
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
       ],
@@ -69,7 +67,7 @@ export const StockChart: React.FC<Props> = ({
   };
   return (
     <div>
-      <Bar options={options} data={generateChartData()} />
+      <Chart type="bar" data={generateChartData()} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
+import { ChartPage } from "../components/chart";
 import { StockChart } from "../components/stock-chart";
 import { frontStockQuery } from "./__generated__/frontStockQuery";
 
@@ -10,18 +11,28 @@ export const Stock = () => {
   });
 
   const stockOpen = data?.gsStock.map((item) => item.open);
-  const stockClose = data?.gsStock.map((item) => item.open);
-  const stockVolume = data?.gsStock.map((item) => item.volume);
-  const stockDate = data?.gsStock.map((item) => item.date);
   const openArray: number[] = [];
-  const closeArray: number[] = [];
-  const volumeArray: number[] = [];
-  const dateArray: string[] = [];
   stockOpen?.forEach((open) => openArray.push(open));
+
+  const stockClose = data?.gsStock.map((item) => item.open);
+  const closeArray: number[] = [];
   stockClose?.forEach((close) => closeArray.push(close));
+
+  const stockVolume = data?.gsStock.map((item) => item.volume);
+  const volumeArray: number[] = [];
   stockVolume?.forEach((volume) => volumeArray.push(volume));
+
+  const stockDate = data?.gsStock.map((item) => item.date);
+  const dateArray: string[] = [];
   stockDate?.forEach((date) => dateArray.push(date.toString()));
-  console.log(stockDate);
+
+  const stockHigh = data?.gsStock.map((item) => item.high);
+  const highArray: number[] = [];
+  stockHigh?.forEach((high) => highArray.push(high));
+
+  const stockLow = data?.gsStock.map((item) => item.low);
+  const LowArray: number[] = [];
+  stockLow?.forEach((low) => LowArray.push(low));
 
   // const stockData = data?.gsStock.map((item) => item);
   // const dataArray: any[] = [];
@@ -30,6 +41,18 @@ export const Stock = () => {
   return (
     <div>
       {!loading ? (
+        <ChartPage
+          openArray={openArray}
+          closeArray={closeArray}
+          highArray={highArray}
+          lowArray={LowArray}
+          dateArray={dateArray}
+        />
+      ) : (
+        <h3>Loading...</h3>
+      )}
+
+      {/* {!loading ? (
         <StockChart
           openArray={openArray}
           closeArray={closeArray}
@@ -38,7 +61,7 @@ export const Stock = () => {
         />
       ) : (
         <h3>Loading...</h3>
-      )}
+      )} */}
 
       {/* <StockChart open={openArray} close={closeArray} volume={volumeArray} /> */}
       {/* <div key={data?.gsStock.find(d1)}></div> */}
