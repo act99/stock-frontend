@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
 import { ChartPage } from "../components/chart";
+import { HandmadeChart } from "../components/handmade-chart";
 import { StockChart } from "../components/stock-chart";
 import { frontStockQuery } from "./__generated__/frontStockQuery";
 
@@ -34,13 +35,19 @@ export const Stock = () => {
   const LowArray: number[] = [];
   stockLow?.forEach((low) => LowArray.push(low));
 
+  const date = ["20200101", "20200102", "20200103", "20200104"];
+  const open = [10000, 12000, 11000, 13000];
+  const close = [12000, 11000, 12800, 11800];
+  const high = [12800, 12000, 13200, 13800];
+  const low = [9900, 10000, 11000, 11500];
+  const volume = [120542, 184232, 542153, 234532];
   // const stockData = data?.gsStock.map((item) => item);
   // const dataArray: any[] = [];
   // dataArray.push(stockData);
   // console.log(dataArray);
   return (
     <div>
-      {!loading ? (
+      {/* {!loading ? (
         <ChartPage
           openArray={openArray}
           closeArray={closeArray}
@@ -50,7 +57,17 @@ export const Stock = () => {
         />
       ) : (
         <h3>Loading...</h3>
-      )}
+      )} */}
+      <div>
+        <HandmadeChart
+          date={dateArray}
+          open={open}
+          close={close}
+          high={high}
+          low={low}
+          volume={volumeArray}
+        />
+      </div>
 
       {/* {!loading ? (
         <StockChart

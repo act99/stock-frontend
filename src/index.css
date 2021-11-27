@@ -8,6 +8,15 @@
 .btn {
   @apply mt-3 text-lg font-medium text-white py-4 bg-cyan-400 hover:bg-cyan-600 transition-colors;
 }
+text {
+  fill: #8b8b8e;
+}
+line {
+  stroke: #8b8b8e;
+}
+.lineLight {
+  stroke: #333336;
+}
 @tailwind utilities;
 
 /* body {

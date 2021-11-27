@@ -6,6 +6,8 @@ module.exports = {
     extend: {
       colors: {
         cyan: colors.cyan,
+        chartGray: { default: "#17181e" },
+        chartLightGray: { default: "#8b8b8e" },
       },
     },
   },
