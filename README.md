@@ -23,3 +23,5 @@ If you didn't check your node version, You can't use codegen!!
 - making floating chart(x)
 - making line chart (x)
 - chatting (x)
+
+![image](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FUhjRS%2FbtrmtVKiQLS%2FobsDdKGpgK9cmb9VKWWe1k%2Fimg.png)

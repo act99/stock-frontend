@@ -15,7 +15,7 @@ export const Stock = () => {
   const openArray: number[] = [];
   stockOpen?.forEach((open) => openArray.push(open));
 
-  const stockClose = data?.gsStock.map((item) => item.open);
+  const stockClose = data?.gsStock.map((item) => item.close);
   const closeArray: number[] = [];
   stockClose?.forEach((close) => closeArray.push(close));
 
@@ -32,15 +32,20 @@ export const Stock = () => {
   stockHigh?.forEach((high) => highArray.push(high));
 
   const stockLow = data?.gsStock.map((item) => item.low);
-  const LowArray: number[] = [];
-  stockLow?.forEach((low) => LowArray.push(low));
+  const lowArray: number[] = [];
+  stockLow?.forEach((low) => lowArray.push(low));
 
-  const date = ["20200101", "20200102", "20200103", "20200104"];
-  const open = [10000, 12000, 11000, 13000];
-  const close = [12000, 11000, 12800, 11800];
-  const high = [12800, 12000, 13200, 13800];
-  const low = [9900, 10000, 11000, 11500];
-  const volume = [120542, 184232, 542153, 234532];
+  const stockName = data?.gsStock.map((item) => item.code_name);
+  const nameArray: string[] = [];
+  stockName?.forEach((name) => nameArray.push(name));
+  // const;
+
+  // const date = ["20200101", "20200102", "20200103", "20200104"];
+  // const open = [10000, 12000, 11000, 13000];
+  // const close = [12000, 11000, 12800, 11800];
+  // const high = [12800, 12000, 13200, 13800];
+  // const low = [9900, 10000, 11000, 11500];
+  // const volume = [120542, 184232, 542153, 234532];
   // const stockData = data?.gsStock.map((item) => item);
   // const dataArray: any[] = [];
   // dataArray.push(stockData);
@@ -52,7 +57,7 @@ export const Stock = () => {
           openArray={openArray}
           closeArray={closeArray}
           highArray={highArray}
-          lowArray={LowArray}
+          lowArray={lowArray}
           dateArray={dateArray}
         />
       ) : (
@@ -61,11 +66,12 @@ export const Stock = () => {
       <div>
         <HandmadeChart
           date={dateArray}
-          open={open}
-          close={close}
-          high={high}
-          low={low}
+          open={openArray}
+          close={closeArray}
+          high={highArray}
+          low={lowArray}
           volume={volumeArray}
+          name={nameArray}
         />
       </div>
 
