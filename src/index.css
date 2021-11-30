@@ -11,9 +11,9 @@
 text {
   fill: #8b8b8e;
 }
-line {
+/* line {
   stroke: #8b8b8e;
-}
+} */
 .lineLight {
   stroke: #333336;
 }
