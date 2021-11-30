@@ -1,5 +1,7 @@
 # Stock-Chart
 
+![image](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbyHg5y%2FbtrmxL9A2TP%2F2b6I1LMaG1slt3MMLk7wuk%2Fimg.png)
+
 ## tailwind css
 
 `npm install -D tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9`
@@ -26,5 +28,3 @@ If you didn't check your node version, You can't use codegen!!
 - get / delete dataArray objects with Mouse scroll (x)
 - making line chart (x)
 - chatting (x)
-
-![image](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbyHg5y%2FbtrmxL9A2TP%2F2b6I1LMaG1slt3MMLk7wuk%2Fimg.png)
