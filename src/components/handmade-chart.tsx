@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { scaleLinear, ScaleLinear } from "d3-scale";
+import React, { useState } from "react";
+import { scaleLinear } from "d3-scale";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { frontStockQuery } from "../pages/__generated__/frontStockQuery";
@@ -18,23 +18,27 @@ export const HandmadeChart: React.FC<Props> = ({ width, height }) => {
 
   // 데이터 가져와서 array 처리
   // stockArray 값을 onWheel로 추가 삭제할 예정
+  // dataDefaultMinusLength => 임시데이터를 사용하기 때문에 데이터 부족으로 구현한 숫자
+  const dataDefaultMinusLength = 18;
   const stockData = data?.gsStock.map((item) => item);
   const stockDummyArray: any[] = [];
   stockData?.forEach((item) => stockDummyArray.push(item));
 
   const stockArray: any[] = [];
-  console.log(dataLength);
   stockData
     ?.slice(dataLength, stockDummyArray.length)
     .forEach((item) => stockArray.push(item));
-  console.log(stockArray[0]);
 
   const dataWheelHandler = () => {
     window.onwheel = function (e) {
       e.deltaY > 0
-        ? setDataLength(dataLength < 18 ? dataLength + 0 : dataLength - 8)
+        ? setDataLength(
+            dataLength < dataDefaultMinusLength
+              ? dataLength + 0
+              : dataLength - 8
+          )
         : setDataLength(
-            dataLength > stockDummyArray?.length - 18
+            dataLength > stockDummyArray?.length - dataDefaultMinusLength
               ? dataLength + 0
               : dataLength + 8
           );
@@ -82,6 +86,89 @@ export const HandmadeChart: React.FC<Props> = ({ width, height }) => {
   const clo60Array: number[] = [];
   stockClo60?.forEach((clo60) => clo60Array.push(clo60));
 
+  // ** 볼린저밴더
+  // 표준편차
+  let dummyLength = 0;
+  const standardDeviation: number[] = [];
+  const bolUp = () => {
+    const clo20ArrayBol: number[][] = [];
+    const clo20Average: number[] = [];
+    const gap: number[][] = [];
+    const variance: number[] = [];
+
+    for (let i = 0; i < stockArray.length; i++) {
+      const a = clo20Array.slice(i, i + 20);
+
+      if (a.length > 19) {
+        clo20ArrayBol.push(a);
+      } else {
+        clo20ArrayBol.push([
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ]);
+      }
+      // [0000000] 이걸 넣은 이유는 데이터가 부족하기 때문이다.
+      clo20Average.push(clo20ArrayBol[i].reduce((a, b) => a + b) / 20);
+    }
+    const calculate = () => {
+      gap.push();
+      for (let i = 0; i < stockArray.length; i++) {
+        gap.push(
+          clo20ArrayBol[i].map((item) => Math.abs(item - clo20Average[i]) ** 2)
+        );
+        variance.push(gap[i].reduce((a, b) => a + b) / 19);
+        // 편의상 round로 반올림 시키겠다.
+        standardDeviation.push(Math.round(Math.sqrt(variance[i])));
+      }
+    };
+    calculate();
+    // *************************************************
+    // ** 아래 for 문은 나중에 real data 를 이용하면 삭제해도 되는 부분!!!
+    // *************************************************
+    for (let i = 0; i < standardDeviation.length; i++) {
+      if (standardDeviation[i] === 0) {
+        standardDeviation.splice(i, 1);
+        dummyLength++;
+        i--;
+      }
+    }
+    for (let i = 0; i < dummyLength; i++) {
+      standardDeviation.unshift(0);
+    }
+    // *************************************************
+    // *************************************************
+
+    console.log(dummyLength);
+    console.log(stockArray);
+    console.log(standardDeviation);
+  };
+
+  bolUp();
+  const dummyClo20Array: number[] = [];
+
+  const bollingerArray: number[][] = [];
+  const caculateBol = () => {
+    // *************************************************
+    // ** 아래 for 문은 나중에 real data 를 이용하면 삭제해도 되는 부분!!!
+    // *************************************************
+    for (let i = 0; i < clo20Array.length - 19; i++) {
+      dummyClo20Array.push(clo20Array[i + 19]);
+    }
+    for (let i = 0; i < dummyLength; i++) {
+      dummyClo20Array.unshift(0);
+    }
+    // *************************************************
+    // *************************************************
+    for (let i = 0; i < clo20Array.length; i++) {
+      bollingerArray.push([
+        dummyClo20Array[i] + standardDeviation[i] * 2,
+        dummyClo20Array[i] - standardDeviation[i] * 2,
+      ]);
+    }
+  };
+  caculateBol();
+
+  console.log(bollingerArray);
+  // ** 볼린저 끝!
   return (
     <div onWheel={dataWheelHandler}>
       <CandleChart
@@ -96,6 +183,7 @@ export const HandmadeChart: React.FC<Props> = ({ width, height }) => {
         clo5={clo5Array}
         clo20={clo20Array}
         clo60={clo60Array}
+        bollinger={bollingerArray}
       />
       <VolumeChart
         width={width}
@@ -171,6 +259,7 @@ type CandleStickProps = {
   clo5: number[];
   clo20: number[];
   clo60: number[];
+  bollinger: number[][];
 };
 
 const CandleChart: React.FC<CandleStickProps> = ({
@@ -185,6 +274,7 @@ const CandleChart: React.FC<CandleStickProps> = ({
   clo5,
   clo20,
   clo60,
+  bollinger,
 }) => {
   let SVG_CHART_WIDTH = typeof width === "number" ? width * 1 : 0;
   let SVG_CHART_HEIGHT = typeof height === "number" ? height * 0.5 : 0;
@@ -194,10 +284,14 @@ const CandleChart: React.FC<CandleStickProps> = ({
   const yAxisLength = SVG_CHART_HEIGHT * 0.94;
   const x0 = 0;
   const y0 = 0;
+
   // const xAxisY = y0 + yAxisLength;
   const clo5Array: [number, number][] = [];
   const clo20Array: [number, number][] = [];
   const clo60Array: [number, number][] = [];
+  const bollingerUpper: number[][] = [];
+  const bollingerLower: number[][] = [];
+
   const dataArray: [
     string,
     number,
@@ -206,8 +300,21 @@ const CandleChart: React.FC<CandleStickProps> = ({
     number,
     number[],
     number[],
+    number[],
+    number[],
     number[]
   ][] = [];
+  for (let i = 0; i < bollinger.length; i++) {
+    bollingerUpper.push([
+      bollinger[i][0],
+      bollinger[i + 1] == undefined ? bollinger[i][0] : bollinger[i + 1][0],
+    ]);
+    bollingerLower.push([
+      bollinger[i][1],
+      bollinger[i + 1] == undefined ? bollinger[i][1] : bollinger[i + 1][1],
+    ]);
+  }
+  console.log(bollingerLower);
   for (let i = 0; i < date.length; i++) {
     clo5Array.push([clo5[i], clo5[i + 1] == undefined ? clo5[i] : clo5[i + 1]]);
     clo20Array.push([
@@ -227,16 +334,15 @@ const CandleChart: React.FC<CandleStickProps> = ({
       clo5Array[i],
       clo20Array[i],
       clo60Array[i],
+      bollingerUpper[i],
+      bollingerLower[i],
     ]);
   }
 
-  console.log(clo5Array);
-  console.log(dataArray);
   const dataYMax = dataArray.reduce(
     (max, [_, open, close, high, low]) => Math.max(max, high),
     -Infinity
   );
-  console.log(dataYMax);
   const dataYMin = dataArray.reduce(
     (min, [_, open, close, high, low]) => Math.min(min, low),
     +Infinity
@@ -251,7 +357,6 @@ const CandleChart: React.FC<CandleStickProps> = ({
   //   +Infinity
   // );
 
-  console.log(dataYMin);
   const dataYRange = dataYMax - dataYMin;
   const numYTicks = 7;
   const barPlothWidth = xAxisLength / dataArray.length;
@@ -260,7 +365,6 @@ const CandleChart: React.FC<CandleStickProps> = ({
 
   const xValue: string[] = [];
   const generateDate = () => {
-    console.log(date[Math.round(9.121345)]);
     for (let i = 0; i < 12; i++) {
       xValue.push(date[Math.round(date.length / 12) * i]);
     }
@@ -344,19 +448,37 @@ const CandleChart: React.FC<CandleStickProps> = ({
         })}
         {/* 캔들 구현 */}
         {dataArray.map(
-          ([day, open, close, high, low, clo5, clo20, clo60], index) => {
+          (
+            [
+              day,
+              open,
+              close,
+              high,
+              low,
+              clo5,
+              clo20,
+              clo60,
+              bolUpper,
+              bolLower,
+            ],
+            index
+          ) => {
+            // 캔들 & 이동평균선
             const x = x0 + index * barPlothWidth;
             const xX = x0 + (index + 1) * barPlothWidth;
             const sidePadding = xAxisLength * 0.0015;
             const max = Math.max(open, close);
             const min = Math.min(open, close);
-
+            // ** 여기도 나중에 real data가 오면 필요 없음
+            // const bolGap =
+            //********
             const scaleY = scaleLinear()
               .domain([dataYMin, dataYMax])
               .range([y0, yAxisLength]);
             const fill = close > open ? "#4AFA9A" : "#E33F64";
             // console.log(scaleY(max));
             // console.log(scaleY(min));
+            console.log(bollingerUpper);
             return (
               <g key={index}>
                 {/* 선행스팬 후행스팬 구름형성에 필요한 빗금 */}
@@ -367,6 +489,35 @@ const CandleChart: React.FC<CandleStickProps> = ({
                   y1={yAxisLength - scaleY(clo5)}
                   y2={yAxisLength - scaleY(clo5)}
                 /> */}
+
+                {bolUpper[0] != bolUpper[1] && bollingerUpper[index][0] != 0 ? (
+                  <line
+                    stroke="blue"
+                    x1={x + (barPlothWidth - sidePadding) / 2}
+                    x2={xX + (barPlothWidth - sidePadding) / 2}
+                    y1={yAxisLength - scaleY(bolUpper[0])}
+                    y2={yAxisLength - scaleY(bolUpper[1])}
+                  />
+                ) : null}
+                {bolLower[0] != bolLower[1] && bollingerUpper[index][0] != 0 ? (
+                  <line
+                    stroke="blue"
+                    x1={x + (barPlothWidth - sidePadding) / 2}
+                    x2={xX + (barPlothWidth - sidePadding) / 2}
+                    y1={yAxisLength - scaleY(bolLower[0])}
+                    y2={yAxisLength - scaleY(bolLower[1])}
+                  />
+                ) : null}
+                {bolLower[0] != bolLower[1] && bollingerUpper[index][0] != 0 ? (
+                  <line
+                    stroke="blue"
+                    x1={x + (barPlothWidth - sidePadding)}
+                    x2={xX + (barPlothWidth - sidePadding)}
+                    y1={yAxisLength - scaleY(bolUpper[1])}
+                    y2={yAxisLength - scaleY(bolLower[0])}
+                  />
+                ) : null}
+
                 {clo5[0] > dataYMin && clo5[0] != clo5[1] ? (
                   <line
                     stroke="green"
@@ -394,13 +545,7 @@ const CandleChart: React.FC<CandleStickProps> = ({
                     y2={yAxisLength - scaleY(clo60[1])}
                   />
                 ) : null}
-                {/* <line
-                  stroke="gold"
-                  x1={x + (barPlothWidth - sidePadding) / 2}
-                  x2={xX + (barPlothWidth - sidePadding) / 2}
-                  y1={yAxisLength - scaleY(clo60[0])}
-                  y2={yAxisLength - scaleY(clo60[1])}
-                /> */}
+
                 <line
                   x1={x + (barPlothWidth - sidePadding) / 2}
                   x2={x + (barPlothWidth - sidePadding) / 2}
@@ -471,7 +616,6 @@ const VolumeChart: React.FC<VolumeProps> = ({
   const barPlotWidth = xAxisLength / dateVolume.length;
   // const testYMax = dateVolume.map((item) => Math.max.apply(item[1]), Infinity);
 
-  console.log(dataYMax);
   return (
     <div>
       <svg width={SVG_VOLUME_WIDTH} height={SVG_VOLUME_HEIGHT}>

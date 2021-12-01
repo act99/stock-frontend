@@ -1,4 +1,4 @@
-import { ApolloError, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -27,13 +27,12 @@ export const Login = () => {
   const {
     register,
     handleSubmit,
-    watch,
     getValues,
     formState: { errors },
   } = useForm<Inputs>();
   const onCompleted = (data: frontLoginMutation) => {
     const {
-      login: { error, ok, token },
+      login: { ok, token },
     } = data;
     if (ok) {
       console.log(token);
@@ -78,7 +77,7 @@ export const Login = () => {
             {...register("email", {
               required: true,
               pattern:
-                /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
+                /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i,
             })}
           />
           {errors.email && (
