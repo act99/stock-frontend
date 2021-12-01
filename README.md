@@ -1,6 +1,6 @@
 # Stock-Chart
 
-![image](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbyHg5y%2FbtrmxL9A2TP%2F2b6I1LMaG1slt3MMLk7wuk%2Fimg.png)
+![image](https://blog.kakaocdn.net/dn/wZmWG/btrmKiEYTQU/o4PIMSEGYHbKM1Oo3NfHDK/img.gif)
 
 ## tailwind css
 
@@ -25,6 +25,7 @@ If you didn't check your node version, You can't use codegen!!
 - load stock data (o)
 - making chart (o)
 - making floating chart(o)
-- get / delete dataArray objects with Mouse scroll (x)
-- making line chart (x)
+- get / delete dataArray objects with Mouse scroll (o)
+- making line chart (o)
+- making bollinger band (x)
 - chatting (x)

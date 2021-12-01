@@ -1,76 +1,176 @@
 import React, { useEffect, useState } from "react";
 import { scaleLinear, ScaleLinear } from "d3-scale";
-
-// date, open, close, high, low, volume
+import gql from "graphql-tag";
+import { useQuery } from "@apollo/client";
+import { frontStockQuery } from "../pages/__generated__/frontStockQuery";
 
 type Props = {
-  width: number;
-  height: number;
-  date: string[];
-  open: number[];
-  close: number[];
-  high: number[];
-  low: number[];
-  volume: number[];
-  name: string[];
+  width: number | undefined;
+  height: number | undefined;
 };
 
-export const HandmadeChart: React.FC<Props> = ({
-  width,
-  height,
-  date,
-  open,
-  close,
-  high,
-  low,
-  volume,
-  name,
-}) => {
-  // const [windowSize, setWindowSize] = useState({
-  //   width: window.innerWidth,
-  //   height: window.innerHeight,
-  // });
-  // const handleResize = () => {
-  //   setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-  // };
-  // useEffect(() => {
-  //   window.addEventListener("resize", handleResize);
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, []);
+export const HandmadeChart: React.FC<Props> = ({ width, height }) => {
+  const { data, loading } = useQuery<frontStockQuery>(STOCK_QUERY, {
+    variables: {},
+  });
+
+  const [dataLength, setDataLength] = useState(24);
+
+  // 데이터 가져와서 array 처리
+  // stockArray 값을 onWheel로 추가 삭제할 예정
+  const stockData = data?.gsStock.map((item) => item);
+  const stockDummyArray: any[] = [];
+  stockData?.forEach((item) => stockDummyArray.push(item));
+
+  const stockArray: any[] = [];
+  console.log(dataLength);
+  stockData
+    ?.slice(dataLength, stockDummyArray.length)
+    .forEach((item) => stockArray.push(item));
+  console.log(stockArray[0]);
+
+  const dataWheelHandler = () => {
+    window.onwheel = function (e) {
+      e.deltaY > 0
+        ? setDataLength(dataLength < 18 ? dataLength + 0 : dataLength - 8)
+        : setDataLength(
+            dataLength > stockDummyArray?.length - 18
+              ? dataLength + 0
+              : dataLength + 8
+          );
+    };
+  };
+
+  // array 데이터들 분류
+  const stockOpen = stockArray.map((item) => item.open);
+  const openArray: number[] = [];
+  stockOpen?.forEach((open) => openArray.push(open));
+
+  const stockClose = stockArray.map((item) => item.close);
+  const closeArray: number[] = [];
+  stockClose?.forEach((close) => closeArray.push(close));
+
+  const stockVolume = stockArray.map((item) => item.volume);
+  const volumeArray: number[] = [];
+  stockVolume?.forEach((volume) => volumeArray.push(volume));
+
+  const stockDate = stockArray.map((item) => item.date);
+  const dateArray: string[] = [];
+  stockDate?.forEach((date) => dateArray.push(date.toString()));
+
+  const stockHigh = stockArray.map((item) => item.high);
+  const highArray: number[] = [];
+  stockHigh?.forEach((high) => highArray.push(high));
+
+  const stockLow = stockArray.map((item) => item.low);
+  const lowArray: number[] = [];
+  stockLow?.forEach((low) => lowArray.push(low));
+
+  const stockName = stockArray.map((item) => item.code_name);
+  const nameArray: string[] = [];
+  stockName?.forEach((name) => nameArray.push(name));
+
+  const stockClo5 = stockArray.map((item) => item.clo5);
+  const clo5Array: number[] = [];
+  stockClo5?.forEach((clo5) => clo5Array.push(clo5));
+
+  const stockClo20 = stockArray.map((item) => item.clo20);
+  const clo20Array: number[] = [];
+  stockClo20?.forEach((clo20) => clo20Array.push(clo20));
+
+  const stockClo60 = stockArray.map((item) => item.clo60);
+  const clo60Array: number[] = [];
+  stockClo60?.forEach((clo60) => clo60Array.push(clo60));
 
   return (
-    <div className=" bg-chartGray-default flex-col flex">
-      <h3 className="text-white"> {width}</h3>
-      <h3 className="text-white"> {height}</h3>
-
+    <div onWheel={dataWheelHandler}>
       <CandleChart
         width={width}
         height={height}
-        date={date}
-        open={open}
-        close={close}
-        high={high}
-        low={low}
-        name={name}
+        date={dateArray}
+        open={openArray}
+        close={closeArray}
+        high={highArray}
+        low={lowArray}
+        name={nameArray}
+        clo5={clo5Array}
+        clo20={clo20Array}
+        clo60={clo60Array}
       />
-      <VolumeChart width={width} height={height} date={date} volume={volume} />
-
-      {/* <VolumeChart date={date} volume={volume} />  */}
+      <VolumeChart
+        width={width}
+        height={height}
+        date={dateArray}
+        volume={volumeArray}
+        open={openArray}
+        close={closeArray}
+      />
     </div>
   );
 };
 
+const STOCK_QUERY = gql`
+  query frontStockQuery {
+    gsStock {
+      index
+      date
+      check_item
+      code
+      code_name
+      d1_diff_rate
+      close
+      open
+      high
+      low
+      volume
+      clo5
+      clo10
+      clo20
+      clo40
+      clo60
+      clo80
+      clo100
+      clo120
+      clo5_diff_rate
+      clo10_diff_rate
+      clo20_diff_rate
+      clo40_diff_rate
+      clo60_diff_rate
+      clo80_diff_rate
+      clo100_diff_rate
+      clo120_diff_rate
+      yes_clo5
+      yes_clo10
+      yes_clo20
+      yes_clo40
+      yes_clo60
+      yes_clo80
+      yes_clo100
+      yes_clo120
+      vol5
+      vol10
+      vol20
+      vol40
+      vol60
+      vol80
+      vol100
+      vol120
+    }
+  }
+`;
+
 type CandleStickProps = {
-  width: number;
-  height: number;
+  width: number | undefined;
+  height: number | undefined;
   date: string[];
   open: number[];
   close: number[];
   high: number[];
   low: number[];
   name: string[];
+  clo5: number[];
+  clo20: number[];
+  clo60: number[];
 };
 
 const CandleChart: React.FC<CandleStickProps> = ({
@@ -82,6 +182,9 @@ const CandleChart: React.FC<CandleStickProps> = ({
   high,
   low,
   name,
+  clo5,
+  clo20,
+  clo60,
 }) => {
   let SVG_CHART_WIDTH = typeof width === "number" ? width * 1 : 0;
   let SVG_CHART_HEIGHT = typeof height === "number" ? height * 0.5 : 0;
@@ -92,11 +195,42 @@ const CandleChart: React.FC<CandleStickProps> = ({
   const x0 = 0;
   const y0 = 0;
   // const xAxisY = y0 + yAxisLength;
-
-  const dataArray: [string, number, number, number, number][] = [];
+  const clo5Array: [number, number][] = [];
+  const clo20Array: [number, number][] = [];
+  const clo60Array: [number, number][] = [];
+  const dataArray: [
+    string,
+    number,
+    number,
+    number,
+    number,
+    number[],
+    number[],
+    number[]
+  ][] = [];
   for (let i = 0; i < date.length; i++) {
-    dataArray.push([date[i], open[i], close[i], high[i], low[i]]);
+    clo5Array.push([clo5[i], clo5[i + 1] == undefined ? clo5[i] : clo5[i + 1]]);
+    clo20Array.push([
+      clo20[i],
+      clo20[i + 1] == undefined ? clo20[i] : clo20[i + 1],
+    ]);
+    clo60Array.push([
+      clo60[i],
+      clo60[i + 1] == undefined ? clo60[i] : clo60[i + 1],
+    ]);
+    dataArray.push([
+      date[i],
+      open[i],
+      close[i],
+      high[i],
+      low[i],
+      clo5Array[i],
+      clo20Array[i],
+      clo60Array[i],
+    ]);
   }
+
+  console.log(clo5Array);
   console.log(dataArray);
   const dataYMax = dataArray.reduce(
     (max, [_, open, close, high, low]) => Math.max(max, high),
@@ -108,14 +242,14 @@ const CandleChart: React.FC<CandleStickProps> = ({
     +Infinity
   );
 
-  const dateMax = dataArray.reduce(
-    (max, [date, open, close, high, low]) => Math.max(max, parseInt(date)),
-    -Infinity
-  );
-  const dateMin = dataArray.reduce(
-    (min, [date, open, close, high, low]) => Math.min(min, parseInt(date)),
-    +Infinity
-  );
+  // const dateMax = dataArray.reduce(
+  //   (max, [date, open, close, high, low]) => Math.max(max, parseInt(date)),
+  //   -Infinity
+  // );
+  // const dateMin = dataArray.reduce(
+  //   (min, [date, open, close, high, low]) => Math.min(min, parseInt(date)),
+  //   +Infinity
+  // );
 
   console.log(dataYMin);
   const dataYRange = dataYMax - dataYMin;
@@ -189,7 +323,7 @@ const CandleChart: React.FC<CandleStickProps> = ({
         })}
         {/* 가로선 작성(css name => lineLight) */}
         {Array.from({ length: numYTicks }).map((_, index) => {
-          const y = y0 + index * (yAxisLength / numYTicks) + 10;
+          const y = y0 + index * (yAxisLength / numYTicks);
           const yValue = Math.round(
             dataYMax - index * (dataYRange / numYTicks)
           );
@@ -202,51 +336,90 @@ const CandleChart: React.FC<CandleStickProps> = ({
                 y1={y}
                 y2={y}
               ></line>
-              <text x={SVG_CHART_WIDTH - 60} y={y} fontSize="12">
+              <text x={SVG_CHART_WIDTH - 60} y={y + 10} fontSize="12">
                 {yValue.toLocaleString()} ￦
               </text>
             </g>
           );
         })}
-        {dataArray.map(([day, open, close, high, low], index) => {
-          const x = x0 + index * barPlothWidth;
-          const sidePadding = xAxisLength * 0.0015;
-          const max = Math.max(open, close);
-          const min = Math.min(open, close);
+        {/* 캔들 구현 */}
+        {dataArray.map(
+          ([day, open, close, high, low, clo5, clo20, clo60], index) => {
+            const x = x0 + index * barPlothWidth;
+            const xX = x0 + (index + 1) * barPlothWidth;
+            const sidePadding = xAxisLength * 0.0015;
+            const max = Math.max(open, close);
+            const min = Math.min(open, close);
 
-          const scaleY = scaleLinear()
-            .domain([dataYMin, dataYMax])
-            .range([y0, yAxisLength]);
-          const fill = close > open ? "#4AFA9A" : "#E33F64";
-          console.log(scaleY(max));
-          console.log(scaleY(min));
-          return (
-            <g key={index}>
-              <line
-                x1={x + xAxisLength * 0.002}
-                y1={yAxisLength - scaleY(low)}
-                x2={x + xAxisLength * 0.002}
-                y2={yAxisLength - scaleY(high)}
-                stroke={open > close ? "red" : "green"}
-              />
-              <rect
-                {...{ fill }}
-                x={x}
-                y={yAxisLength - scaleY(max)}
-                width={barPlothWidth - sidePadding}
-                // 시가 종가 최대 최소값의 차
-                height={scaleY(max) - scaleY(min)}
-              ></rect>
-              {/* <rect
-                  fill={open > close ? "red" : "green"}
-                  x={x + sidePadding / 2}
-                  y={0}
-                  width={1}
-                  height={(SVG_CHART_HEIGHT * (high - low)) / dataYMax}
-                ></rect> */}
-            </g>
-          );
-        })}
+            const scaleY = scaleLinear()
+              .domain([dataYMin, dataYMax])
+              .range([y0, yAxisLength]);
+            const fill = close > open ? "#4AFA9A" : "#E33F64";
+            // console.log(scaleY(max));
+            // console.log(scaleY(min));
+            return (
+              <g key={index}>
+                {/* 선행스팬 후행스팬 구름형성에 필요한 빗금 */}
+                {/* <line
+                  stroke="red"
+                  x1={x + (barPlothWidth - sidePadding) / 2}
+                  x2={xX + (barPlothWidth - sidePadding) / 2}
+                  y1={yAxisLength - scaleY(clo5)}
+                  y2={yAxisLength - scaleY(clo5)}
+                /> */}
+                {clo5[0] > dataYMin && clo5[0] != clo5[1] ? (
+                  <line
+                    stroke="green"
+                    x1={x + (barPlothWidth - sidePadding) / 2}
+                    x2={xX + (barPlothWidth - sidePadding) / 2}
+                    y1={yAxisLength - scaleY(clo5[0])}
+                    y2={yAxisLength - scaleY(clo5[1])}
+                  />
+                ) : null}
+                {clo20[0] > dataYMin && clo20[0] != clo20[1] ? (
+                  <line
+                    stroke="red"
+                    x1={x + (barPlothWidth - sidePadding) / 2}
+                    x2={xX + (barPlothWidth - sidePadding) / 2}
+                    y1={yAxisLength - scaleY(clo20[0])}
+                    y2={yAxisLength - scaleY(clo20[1])}
+                  />
+                ) : null}
+                {clo60[0] > dataYMin && clo60[0] != clo60[1] ? (
+                  <line
+                    stroke="gold"
+                    x1={x + (barPlothWidth - sidePadding) / 2}
+                    x2={xX + (barPlothWidth - sidePadding) / 2}
+                    y1={yAxisLength - scaleY(clo60[0])}
+                    y2={yAxisLength - scaleY(clo60[1])}
+                  />
+                ) : null}
+                {/* <line
+                  stroke="gold"
+                  x1={x + (barPlothWidth - sidePadding) / 2}
+                  x2={xX + (barPlothWidth - sidePadding) / 2}
+                  y1={yAxisLength - scaleY(clo60[0])}
+                  y2={yAxisLength - scaleY(clo60[1])}
+                /> */}
+                <line
+                  x1={x + (barPlothWidth - sidePadding) / 2}
+                  x2={x + (barPlothWidth - sidePadding) / 2}
+                  y1={yAxisLength - scaleY(low)}
+                  y2={yAxisLength - scaleY(high)}
+                  stroke={open > close ? "red" : "green"}
+                />
+                <rect
+                  {...{ fill }}
+                  x={x}
+                  width={barPlothWidth - sidePadding}
+                  y={yAxisLength - scaleY(max)}
+                  // 시가 종가 최대 최소값의 차
+                  height={scaleY(max) - scaleY(min)}
+                ></rect>
+              </g>
+            );
+          }
+        )}
       </svg>
     </div>
   );
@@ -255,8 +428,10 @@ const CandleChart: React.FC<CandleStickProps> = ({
 type VolumeProps = {
   date: string[];
   volume: number[];
-  width: number;
-  height: number;
+  width: number | undefined;
+  height: number | undefined;
+  open: number[];
+  close: number[];
 };
 
 const VolumeChart: React.FC<VolumeProps> = ({
@@ -264,6 +439,8 @@ const VolumeChart: React.FC<VolumeProps> = ({
   volume,
   width,
   height,
+  open,
+  close,
 }) => {
   let SVG_VOLUME_WIDTH = typeof width === "number" ? width * 1 : 0;
   let SVG_VOLUME_HEIGHT = typeof height === "number" ? height * 0.3 : 0;
@@ -274,9 +451,9 @@ const VolumeChart: React.FC<VolumeProps> = ({
   const y0 = 0;
 
   const xAxisY = y0 + yAxisLength;
-  const dateVolume: [string, number][] = [];
+  const dateVolume: [string, number, number, number][] = [];
   for (let i = 0; i < date.length; i++) {
-    dateVolume.push([date[i], volume[i]]);
+    dateVolume.push([date[i], volume[i], open[i], close[i]]);
   }
 
   // 배열.reduce((누적값, 현잿값, 인덱스, 요소) => { return 결과 }, 초깃값);
@@ -337,7 +514,7 @@ const VolumeChart: React.FC<VolumeProps> = ({
           );
         })}
 
-        {dateVolume.map(([day, dataY], index) => {
+        {dateVolume.map(([day, dataY, open, close], index) => {
           // x는 바 위치
           const x = x0 + index * barPlotWidth;
           let yRatio = 0;
@@ -352,12 +529,13 @@ const VolumeChart: React.FC<VolumeProps> = ({
           const y = y0 + (1 - yRatioGenerator()) * yAxisLength;
           const height = yRatioGenerator() * yAxisLength;
 
-          const sidePadding = 5;
+          const sidePadding = xAxisLength * 0.0015;
+          const fill = close > open ? "#4AFA9A" : "#E33F64";
           return (
             <g key={index}>
               <rect
-                fill="red"
-                x={x + sidePadding / 2}
+                {...{ fill }}
+                x={x}
                 y={y}
                 width={barPlotWidth - sidePadding}
                 height={height}
