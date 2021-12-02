@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { HandmadeChart } from "../components/handmade-chart";
+import { HandmadeChart } from "../containers/handmade-chart";
 
 interface Size {
   width: number | undefined;
@@ -28,11 +28,6 @@ function useWindowSize(): Size {
     return () => window.removeEventListener("resize", handleResize);
   }, []); // Empty array ensures that effect is only run on mount
 
-  const a = [0, 2, 3, 4, 8, 5, 1, 2, 3];
-  const arr: any[] = [];
-  const b = () => arr.push(a.map((item) => Math.sqrt(item)));
-  b();
-  console.log(arr);
   return windowSize;
 }
 
