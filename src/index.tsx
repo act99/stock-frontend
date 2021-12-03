@@ -8,6 +8,7 @@ import { client } from "./apollo";
 import { createStore } from "redux";
 import rootReducer from "./modules";
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 
 const store = createStore(rootReducer);
 
@@ -15,7 +16,9 @@ ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
       <ApolloProvider client={client}>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </ApolloProvider>
     </React.StrictMode>
   </Provider>,

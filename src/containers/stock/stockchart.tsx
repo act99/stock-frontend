@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
-import { frontStockQuery } from "../pages/__generated__/frontStockQuery";
-import { CandleChart } from "../components/candlechart";
-import { VolumeChart } from "../components/volumechart";
+import { frontStockQuery } from "../../pages/__generated__/frontStockQuery";
+import { CandleChart } from "../../components/chart/candlechart";
+import { VolumeChart } from "../../components/chart/volumechart";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../modules";
-import { decrease, increase, increaseBy } from "../modules/counter";
-import Counter from "../components/counter";
-import { bollingerCal } from "../functions/bol-cal";
-import { STOCK_QUERY } from "../gql-query/stock-query";
-import { dataToArray } from "../functions/data-to-array";
+import { RootState } from "../../modules";
+import { decrease, increase, increaseBy } from "../../modules/counter";
+import Counter from "../../components/counter";
+import { bollingerCal } from "../../functions/bol-cal";
+import { STOCK_QUERY } from "../../gql-query/stock-query";
+import { dataToArray } from "../../functions/data-to-array";
 
 type Props = {
   width: number | undefined;
   height: number | undefined;
 };
 
-export const HandmadeChart: React.FC<Props> = ({ width, height }) => {
+export const StockChart: React.FC<Props> = ({ width, height }) => {
   const { data, loading } = useQuery<frontStockQuery>(STOCK_QUERY, {
     variables: {},
   });

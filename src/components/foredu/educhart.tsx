@@ -39,7 +39,7 @@ type Props = {
   dateArray: string[];
 };
 
-export const StockChart: React.FC<Props> = ({
+export const eduChart: React.FC<Props> = ({
   openArray,
   closeArray,
   volumeArray,

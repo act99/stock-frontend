@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { HandmadeChart } from "../containers/handmade-chart";
+import { StockChart } from "../../containers/stock/stockchart";
 
 interface Size {
   width: number | undefined;
@@ -38,7 +38,7 @@ export const Stock = () => {
   return (
     <div className=" bg-chartGray-default flex-col flex">
       <div>
-        <HandmadeChart width={size.width} height={size.height} />
+        <StockChart width={size.width} height={size.height} />
       </div>
     </div>
   );

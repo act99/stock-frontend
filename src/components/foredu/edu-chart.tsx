@@ -10,7 +10,7 @@ type Props = {
   dateArray: string[];
 };
 
-export const ChartPage: React.FC<Props> = ({
+export const educhartsd: React.FC<Props> = ({
   dateArray,
   openArray,
   highArray,

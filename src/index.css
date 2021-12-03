@@ -14,9 +14,18 @@ text {
 /* line {
   stroke: #8b8b8e;
 } */
+
 .lineLight {
   stroke: #333336;
 }
+.container {
+  @apply bg-gray-200 h-screen;
+}
+
+.devLogo {
+  @apply flex items-center justify-center text-5xl text-gray-300 h-5/6;
+}
+
 @tailwind utilities;
 
 /* body {
