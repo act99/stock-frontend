@@ -8,6 +8,12 @@
 `npm install @craco/craco`
 `npm i d3-scale`
 `npm i --save-dev @types/d3-scale`
+`npm install @reduxjs/toolkit`
+`npm i redux`
+`npm install react-spinners`
+`npm i react-tailwind-table`
+`npm install react-table`
+`npm i @types/react-table`
 
 ## apollo & apollo-toolings
 

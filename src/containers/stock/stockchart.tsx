@@ -22,17 +22,17 @@ export const StockChart: React.FC<Props> = ({ width, height }) => {
     variables: {},
   });
 
-  const count = useSelector((state: RootState) => state.counter.count);
-  const dispatch = useDispatch();
-  const onIncrease = () => {
-    dispatch(increase());
-  };
-  const onDecrease = () => {
-    dispatch(decrease);
-  };
-  const onIncreaseBy = (diff: number) => {
-    dispatch(increaseBy(diff));
-  };
+  // const count = useSelector((state: RootState) => state.counter.count);
+  // const dispatch = useDispatch();
+  // const onIncrease = () => {
+  //   dispatch(increase());
+  // };
+  // const onDecrease = () => {
+  //   dispatch(decrease);
+  // };
+  // const onIncreaseBy = (diff: number) => {
+  //   dispatch(increaseBy(diff));
+  // };
 
   const [dataLength, setDataLength] = useState(24);
 
@@ -90,12 +90,12 @@ export const StockChart: React.FC<Props> = ({ width, height }) => {
         open={dataToArray(stockArray, 8)}
         volume={dataToArray(stockArray, 11)}
       />
-      <Counter
+      {/* <Counter
         count={count}
         onDecrease={onDecrease}
         onIncrease={onIncrease}
         onIncreaseBy={onIncreaseBy}
-      />
+      /> */}
     </div>
   );
 };

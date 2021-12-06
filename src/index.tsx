@@ -9,19 +9,19 @@ import { createStore } from "redux";
 import rootReducer from "./modules";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-
-const store = createStore(rootReducer);
+import store from "./app/store";
 
 ReactDOM.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <ApolloProvider client={client}>
-        <BrowserRouter>
+  <React.StrictMode>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <Provider store={store}>
           <App />
-        </BrowserRouter>
-      </ApolloProvider>
-    </React.StrictMode>
-  </Provider>,
+        </Provider>
+      </BrowserRouter>
+    </ApolloProvider>
+  </React.StrictMode>,
+
   document.getElementById("root")
 );
 
