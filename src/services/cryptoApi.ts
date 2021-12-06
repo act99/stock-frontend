@@ -19,4 +19,15 @@ export const cryptoApi = createApi({
   }),
 });
 
+export const cryptoHistoryApi = createApi({
+  reducerPath: "cryptoHistoryApi",
+  baseQuery: fetchBaseQuery({ baseUrl }),
+  endpoints: (builder) => ({
+    getCryptosHistory: builder.query({
+      query: (id) => createRequest(`/coin/${id}/history/7d`),
+    }),
+  }),
+});
+
 export const { useGetCryptosQuery } = cryptoApi;
+export const { useGetCryptosHistoryQuery } = cryptoHistoryApi;

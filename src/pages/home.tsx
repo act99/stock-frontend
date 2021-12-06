@@ -9,7 +9,6 @@ type ColumnProps = {
 
 export const Home = () => {
   const { data, isLoading, error } = useGetCryptosQuery("coins");
-  console.log(data);
   const globalStats = data?.data?.stats;
 
   const columns = [

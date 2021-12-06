@@ -7,6 +7,7 @@ import { Home } from "../pages/home";
 import { Login } from "../pages/login";
 import { Stock } from "../pages/stock/stock";
 import navigationData from "../components/navbar/navArr";
+import { Coin } from "../pages/coin/coin";
 
 export const LogoutRouter = () => {
   const { currentRoute, setCurrentRoute } = useNavigation();
@@ -25,10 +26,11 @@ export const LogoutRouter = () => {
         />
       </div>
       <Routes>
-        <Route path="/" element={<Stock />} />
+        <Route path="/" element={<Coin />} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/coin" element={<Coin />} />
       </Routes>
     </>
   );
