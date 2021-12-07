@@ -16,7 +16,7 @@ type CandleStickProps = {
   bollinger: number[][];
 };
 
-export const CandleChart: React.FC<CandleStickProps> = ({
+export const StockCandle: React.FC<CandleStickProps> = ({
   width,
   height,
   date,

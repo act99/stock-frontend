@@ -9,7 +9,7 @@ type VolumeProps = {
   close: number[];
 };
 
-export const VolumeChart: React.FC<VolumeProps> = ({
+export const Volume: React.FC<VolumeProps> = ({
   date,
   volume,
   width,

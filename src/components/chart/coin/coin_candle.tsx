@@ -1,35 +1,59 @@
 import { scaleLinear } from "d3-scale";
 import React from "react";
-
+import { dataToArray } from "../../../functions/data-to-array";
+import { useGetCryptoCompareHistoryQuery } from "../../../services/cryptoApi";
 type CandleProps = {
   width: number | undefined;
   height: number | undefined;
-  date: number[];
-  open: number[];
-  close: number[];
-  high: number[];
-  low: number[];
-  name: string;
+  defaultLimit: number | undefined;
+  dataLength: number | undefined;
+  name: string | undefined;
+
   // clo5: number[];
   // clo20: number[];
   // clo60: number[];
   // bollinger: number[][];
 };
 
-export const Candle: React.FC<CandleProps> = ({
+export const CoinCandle: React.FC<CandleProps> = ({
   width,
   height,
-  date,
-  open,
-  close,
-  high,
-  low,
+  defaultLimit,
+  dataLength,
   name,
+
   // clo5,
   // clo20,
   // clo60,
   // bollinger,
 }) => {
+  //***Get data */
+  const { data, isLoading, error } = useGetCryptoCompareHistoryQuery({
+    limit: defaultLimit,
+    coin: name,
+  });
+
+  const coinDataArray: any[] | undefined = [];
+  const readingData = async () => {
+    return !isLoading ? coinDataArray.push(data.Data.Data) : null;
+  };
+  readingData();
+  const coinDummyArray = coinDataArray[0];
+
+  const coinArray: any[] = [];
+  coinDummyArray
+    ?.slice(dataLength, coinDummyArray.length)
+    .forEach((item: any) => coinArray.push(Object.values(item)));
+  console.log(coinArray);
+
+  const date = dataToArray(coinArray, 0);
+  const open = dataToArray(coinArray, 3);
+  const close = dataToArray(coinArray, 6);
+  const high = dataToArray(coinArray, 1);
+  const low = dataToArray(coinArray, 2);
+
+  //***Get data done*/
+
   let SVG_CHART_WIDTH = typeof width === "number" ? width * 1 : 0;
   let SVG_CHART_HEIGHT = typeof height === "number" ? height * 0.5 : 0;
 

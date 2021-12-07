@@ -6,7 +6,6 @@ import reportWebVitals from "./reportWebVitals";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "./apollo";
 import { createStore } from "redux";
-import rootReducer from "./modules";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import store from "./app/store";

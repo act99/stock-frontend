@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { frontStockQuery } from "../../pages/__generated__/frontStockQuery";
-import { CandleChart } from "../../components/chart/candlechart";
-import { VolumeChart } from "../../components/chart/volumechart";
+import { StockCandle } from "../../components/chart/stock/stock_candle";
+import { StockVolume } from "../../components/chart/stock/stock_volume";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../modules";
-import { decrease, increase, increaseBy } from "../../modules/counter";
 import Counter from "../../components/counter";
 import { bollingerCal } from "../../functions/bol-cal";
 import { STOCK_QUERY } from "../../gql-query/stock-query";
@@ -44,6 +42,7 @@ export const StockChart: React.FC<Props> = ({ width, height }) => {
   const stockDummyArray: any[] | undefined = [];
   stockData?.forEach((item) => stockDummyArray.push(item));
 
+  // 이 작업도 역시 실시간 데이터가 충분하면 안해도 됨
   const stockArray: any[] | undefined = [];
   stockData
     ?.slice(dataLength, stockDummyArray.length)
@@ -67,7 +66,7 @@ export const StockChart: React.FC<Props> = ({ width, height }) => {
 
   return (
     <div onWheel={dataWheelHandler}>
-      <CandleChart
+      <StockCandle
         width={width}
         height={height}
         date={dataToArray(stockArray, 2)}
@@ -81,7 +80,7 @@ export const StockChart: React.FC<Props> = ({ width, height }) => {
         clo60={dataToArray(stockArray, 16)}
         bollinger={bollingerCal(stockArray, dataToArray(stockArray, 14))}
       />
-      <VolumeChart
+      <StockVolume
         width={width}
         height={height}
         date={dataToArray(stockArray, 2)}
