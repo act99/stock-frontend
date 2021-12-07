@@ -20,7 +20,7 @@ const Navbar = ({ navigationData, currentRoute, setCurrentRoute }: Props) => {
       <img src={logo} className=" h-14" />
       <ul className={styles.navItems}>
         {navigationData.map((item, index) => (
-          <li>
+          <li key={index}>
             <Link
               key={index}
               onClick={() => setCurrentRoute(item)}

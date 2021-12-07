@@ -41,10 +41,10 @@ export const StockChart: React.FC<Props> = ({ width, height }) => {
   // dataDefaultMinusLength => 임시데이터를 사용하기 때문에 데이터 부족으로 구현한 숫자
   const dataDefaultMinusLength = 18;
   const stockData = data?.gsStock.map((item) => item);
-  const stockDummyArray: any[] = [];
+  const stockDummyArray: any[] | undefined = [];
   stockData?.forEach((item) => stockDummyArray.push(item));
 
-  const stockArray: any[] = [];
+  const stockArray: any[] | undefined = [];
   stockData
     ?.slice(dataLength, stockDummyArray.length)
     .forEach((item) => stockArray.push(Object.values(item)));
@@ -64,7 +64,6 @@ export const StockChart: React.FC<Props> = ({ width, height }) => {
           );
     };
   };
-  console.log(stockArray);
 
   return (
     <div onWheel={dataWheelHandler}>

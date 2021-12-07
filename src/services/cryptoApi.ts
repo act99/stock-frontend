@@ -6,6 +6,7 @@ const cryptoApiHeaders = {
 };
 
 const baseUrl = "https://coinranking1.p.rapidapi.com";
+const cryptoCompareURL = "https://min-api.cryptocompare.com/data/v2";
 
 const createRequest = (url: string) => ({ url, headers: cryptoApiHeaders });
 
@@ -29,5 +30,20 @@ export const cryptoHistoryApi = createApi({
   }),
 });
 
+export const cryptoCompareHistoryApi = createApi({
+  reducerPath: "cryptoCompareHistoryApi",
+  baseQuery: fetchBaseQuery({ baseUrl: cryptoCompareURL }),
+  endpoints: (builder) => ({
+    getCryptoCompareHistory: builder.query({
+      query: ({ limit, coin }) => {
+        return {
+          url: `/histoday?fsym=${coin}&tsym=USD&limit=${limit}`,
+        };
+      },
+    }),
+  }),
+});
+
 export const { useGetCryptosQuery } = cryptoApi;
 export const { useGetCryptosHistoryQuery } = cryptoHistoryApi;
+export const { useGetCryptoCompareHistoryQuery } = cryptoCompareHistoryApi;

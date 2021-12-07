@@ -32,7 +32,7 @@ const Tabbar = ({ navigationData, currentRoute, setCurrentRoute }: Props) => {
   return (
     <nav className={styles.tabbar}>
       {navigationData.map((item, index) => (
-        <span>
+        <span key={index}>
           <Link
             key={index}
             className={classNames([
